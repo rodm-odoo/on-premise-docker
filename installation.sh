@@ -74,7 +74,7 @@ if [[ "$CREATE_FOLDERS" == true ]]; then
 
 				cat > "$DEFAULT_DIR/config/odoo.conf" <<'EOF'
 [options]
-admin_passwd = mysupersecretpassword
+admin_passwd = admin
 db_host = odoo_db
 db_port = 5432
 db_user = odoo
