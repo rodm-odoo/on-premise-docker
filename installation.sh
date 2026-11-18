@@ -26,7 +26,7 @@ if [[ ! "$ODOO_VERSION" =~ ^[0-9]+\.0$ ]]; then
     exit 1
 fi
 
-DEFAULT_DIR="odoo $ODOO_VERSION"
+DEFAULT_DIR="odoo$ODOO_VERSION"
 
 echo ""
 echo -e "${YELLOW}Para instalar Odoo On-Premise precisamos criar a seguinte estrutura de pastas:${NC}"
