@@ -3,13 +3,13 @@
 
 set -e
 
+# Colors
 GREEN='\033[0;32m'
 RED='\033[0;31m'
 YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m'
 
-DEFAULT_DIR="odoo"
 
 echo -e "${BLUE}====================================${NC}"
 echo -e "${BLUE}     Instalação Odoo On-Premise     ${NC}"
@@ -25,6 +25,8 @@ if [[ ! "$ODOO_VERSION" =~ ^[0-9]+\.0$ ]]; then
     echo -e "${RED}Erro: Versão inválida. Use o formato XX.0${NC}"
     exit 1
 fi
+
+DEFAULT_DIR="odoo $ODOO_VERSION"
 
 echo ""
 echo -e "${YELLOW}Para instalar Odoo On-Premise precisamos criar a seguinte estrutura de pastas:${NC}"
@@ -81,7 +83,8 @@ addons_path = /mnt/extra-addons/enterprise/,/mnt/extra-addons/user/
 limit_time_real = 5000
 log_level = info
 list_db = True
-db_filter = .*
+http_interface = 0.0.0.0
+http_port = 8069
 EOF
 
 				echo -e "${GREEN}✔  odoo.conf criado com sucesso.${NC}"
@@ -98,10 +101,9 @@ services:
       - "8069:8069"
     restart: unless-stopped
     volumes:
-      - odoo-web-data:/var/lib/odoo 
+      - odoo-web-data$ODOO_VERSION:/var/lib/odoo 
       - ./config:/etc/odoo          
       - ./addons:/mnt/extra-addons  
-    command: /usr/bin/odoo --dev=all
   odoo_db:
     image: postgres:18
     ports:
@@ -111,12 +113,12 @@ services:
       - POSTGRES_DB=postgres
       - POSTGRES_PASSWORD=odoo
       - POSTGRES_USER=odoo
-      - PGDATA=/var/lib/postgresql/data/pgdata
+      - PGDATA=/var/lib/postgresql/18/docker
     volumes:
-      - odoo-db-data:/var/lib/postgresql/data/pgdata
+      - odoo-db-data$ODOO_VERSION:/var/lib/postgresql/18/docker
 volumes:
-  odoo-web-data:
-  odoo-db-data:
+  odoo-web-data$ODOO_VERSION:
+  odoo-db-data$ODOO_VERSION:
 EOF
 
 				echo -e "${GREEN}✔  docker-compose.yml criado com sucesso.${NC}"
@@ -179,5 +181,3 @@ echo ""
 echo "Para iniciar o Odoo On-Premise rode os seguintes comandos:"
 echo -e "${YELLOW}cd "$DEFAULT_DIR"${NC}"
 echo -e "${YELLOW}sudo docker compose up${NC}"
-
-
